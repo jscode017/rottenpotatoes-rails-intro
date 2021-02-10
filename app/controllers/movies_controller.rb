@@ -8,6 +8,25 @@ class MoviesController < ApplicationController
 
   def index
     @movies = Movie.all
+    @all_ratings=Movie.all_ratings
+    if !(params.include?(:commit) && params[:commit]=='Refresh')
+      @movies=Movie.all
+      @ratings_to_show=[]
+      print "first get"
+      print "#{params}"
+    else
+      print "has params"
+      print "#{params}"
+      if params[:ratings]
+      @ratings_to_show=params[:ratings].keys
+        if @ratings_to_show.length==0
+          @rating_to_show=[]
+        end
+      else
+        @ratings_to_show=[]
+      end
+      @movies=Movie.where('rating in (?)',@ratings_to_show)
+    end
   end
 
   def new
@@ -43,5 +62,8 @@ class MoviesController < ApplicationController
   # This helps make clear which methods respond to requests, and which ones do not.
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
+  end
+  def ratings_to_show=(ratings)
+    @ratings_to_show=ratings
   end
 end
