@@ -12,11 +12,7 @@ class MoviesController < ApplicationController
     if !(params.include?(:commit) && params[:commit]=='Refresh')
       @movies=Movie.all
       @ratings_to_show=[]
-      print "first get"
-      print "#{params}"
     else
-      print "has params"
-      print "#{params}"
       if params[:ratings]
       @ratings_to_show=params[:ratings].keys
         if @ratings_to_show.length==0
