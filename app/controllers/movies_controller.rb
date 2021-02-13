@@ -9,20 +9,27 @@ class MoviesController < ApplicationController
   def index
     @movies = Movie.all
     @all_ratings=Movie.all_ratings
-    if !(params.include?(:commit) && params[:commit]=='Refresh')
+    if !params.include?(:ratings)
       @movies=Movie.all
       @ratings_to_show=[]
     else
-      if params[:ratings]
       @ratings_to_show=params[:ratings].keys
-        if @ratings_to_show.length==0
-          @rating_to_show=[]
-        end
-      else
-        @ratings_to_show=[]
+      if @ratings_to_show.length==0
+        @rating_to_show=[]
       end
-      @movies=Movie.where('rating in (?)',@ratings_to_show)
+      @movies=Movie.with_ratings(@ratings_to_show)
     end
+    
+    if params.include?("sort_by")
+      @sort_by=params[:sort_by]
+      if @sort_by=='title'
+        @movies=@movies.order('title')
+      elsif @sort_by=='release_date'
+        @movies=@movies.order('release_date')
+      end
+    end
+    
+    
   end
 
   def new

@@ -5,4 +5,10 @@ class Movie < ActiveRecord::Base
      def all_ratings=(ratings)
           @all_ratings=ratings
      end
+     def self.with_ratings(ratings_list)
+          if ratings_list.nil?
+               return Movie.all
+          end
+          return Movie.where('rating in (?)',ratings_list)   
+     end
 end
