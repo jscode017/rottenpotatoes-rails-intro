@@ -9,6 +9,9 @@ class MoviesController < ApplicationController
   def index
     @movies = Movie.all
     @all_ratings=Movie.all_ratings
+    if !params.include?(:notFirst)
+      session.clear
+    end
     if !params.include?(:ratings) && !session.include?(:ratings)
       @movies=Movie.all
       @ratings_to_show=[]
@@ -24,7 +27,7 @@ class MoviesController < ApplicationController
       @movies=Movie.all
       @ratings_to_show=[]
       session[:ratings]=Hash.new
-    else
+    elsif 
       @ratings_to_show=session[:ratings].keys
       if @ratings_to_show.length==0
         @rating_to_show=[]
@@ -55,7 +58,7 @@ class MoviesController < ApplicationController
   def create
     @movie = Movie.create!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully created."
-    redirect_to movies_path
+    redirect_to movies_path, :notFirst=> true
   end
 
   def edit
@@ -66,14 +69,14 @@ class MoviesController < ApplicationController
     @movie = Movie.find params[:id]
     @movie.update_attributes!(movie_params)
     flash[:notice] = "#{@movie.title} was successfully updated."
-    redirect_to movie_path(@movie)
+    redirect_to movie_path(@movie), :notFirst=> true
   end
 
   def destroy
     @movie = Movie.find(params[:id])
     @movie.destroy
     flash[:notice] = "Movie '#{@movie.title}' deleted."
-    redirect_to movies_path
+    redirect_to movies_path(), :notFirst=> true
   end
 
   private
